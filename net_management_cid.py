@@ -2,84 +2,53 @@
 import os
 import pandas as pd
 import datetime
-start_time=datetime.datetime.now()   # ¿ªÊ¼¼ÆÊ±
-print('ÔËĞĞ¿ªÊ¼Ê±¼ä:',start_time)
-# ÊäÈëÂ·¾¶
-os.chdir(r'C:\Users\yc\Desktop\Íø¹ÜCID')
-# Êä³öÂ·¾¶ output_path
+start_time=datetime.datetime.now()   # å¼€å§‹è®¡æ—¶
+print('è¿è¡Œå¼€å§‹æ—¶é—´:',start_time)
+# è¾“å…¥è·¯å¾„
+os.chdir(r'C:\Users\yc\Desktop\ç½‘ç®¡CID')
+# è¾“å‡ºè·¯å¾„ output_path
 date_name=str(datetime.date.today())
 output_path='./output'
 if not os.path.exists(output_path):
     os.makedirs(output_path)
-# ¶ÁÈ¡Ô­Ê¼Êı¾İ
+# è¯»å–åŸå§‹æ•°æ®
 hwonu_df=pd.read_csv('hwonu.csv',encoding='utf8')
-hwvlan1=pd.read_csv('hwvlan.csv',encoding='gbk',skiprows=8)
-hwvlan2=pd.read_csv('hwvlan@1.csv',encoding='gbk')
-hwvlan3=pd.read_csv('hwvlan@2.csv',encoding='gbk')
-hwvlan_df=pd.concat([hwvlan1,hwvlan2,hwvlan3])
-zxvlan1=pd.read_csv('a.csv',encoding='gbk')
-zxvlan2=pd.read_csv('b.csv',encoding='gbk')
-zxvlan3=pd.read_csv('c.csv',encoding='gbk')
-zxvlan_df=pd.concat([zxvlan1,zxvlan2,zxvlan3])
 m=[]
 for i in range(1,10):
     zxonu_slice=pd.read_excel('{}.xls'.format(str(i)))
     m.append(zxonu_slice)
 zxonu_df=pd.concat(m)
-print('¶ÁÈ¡Êı¾İÍê±Ï£¬Ê±¼ä:',datetime.datetime.now())
-# »ªÎªONUÈÏÖ¤Öµ×ª»»
+print('è¯»å–æ•°æ®å®Œæ¯•ï¼Œæ—¶é—´:',datetime.datetime.now())
+# åä¸ºONUè®¤è¯å€¼è½¬æ¢
 def hw_reg_transform(strin):
     if strin.endswith('--'):
         y=strin.replace('#--','')
     else:
         y=strin.split('#')[-1]
     return ('0'*(24-len(y))+y).upper()
-# ÖĞĞËONUÈÏÖ¤Öµ×ª»»
+# ä¸­å…´ONUè®¤è¯å€¼è½¬æ¢
 def zx_reg_transform(strin):
     strin=strin.replace('/ztepon','').replace('/1111','').replace('-','')
     return ('0'*(24-len(strin))+strin).upper()
-# »ªÎªÍø¹ÜonuÊı¾İ´¦Àí
-hwonu_df.rename(columns={'ONUÃû³Æ':'onu_name','ONU ID':'ontid'},inplace=True)
-hwonu_df['pon']=hwonu_df['OLTÃû³Æ']+'_¿ò:'+hwonu_df['¿ò'].map(str)+'/²Û:'\
-                        +hwonu_df['²Û'].map(str)+'/¶Ë¿Ú:'+hwonu_df['¶Ë¿Ú'].map(str)
+# åä¸ºç½‘ç®¡onuæ•°æ®å¤„ç†
+hwonu_df.rename(columns={'ONUåç§°':'onu_name','ONU ID':'ontid'},inplace=True)
+hwonu_df['pon']=hwonu_df['OLTåç§°']+'_æ¡†:'+hwonu_df['æ¡†'].map(str)+'/æ§½:'\
+                        +hwonu_df['æ§½'].map(str)+'/ç«¯å£:'+hwonu_df['ç«¯å£'].map(str)
 hwonu_df['mark']=hwonu_df['pon']+'/ONTID:'+hwonu_df['ontid'].map(str)
 hw_reg_col=hwonu_df['SN/MAC']+'#'+hwonu_df['LOID']
-hwonu_df['cid']=hwonu_df['OLT IPµØÖ·']+'/0/'+hwonu_df['¿ò'].map(str)+'/'+hwonu_df['²Û'].map(str)+\
-                '/0/'+hwonu_df['¶Ë¿Ú'].map(str)+'/'+hw_reg_col.map(hw_reg_transform)
-new_hwonu_df=hwonu_df[['mark','onu_name','pon','ontid','cid']]
-# »ªÎªÍø¹ÜvlanÊı¾İ´¦Àí
-hwvlan_df['mark']=hwvlan_df['ÍøÔªÃû³Æ']+'_¿ò:'+hwvlan_df['¿òºÅ'].map(str)+'/²Û:'\
-                        +hwvlan_df['²ÛºÅ'].map(str)+'/¶Ë¿Ú:'+hwvlan_df['¶Ë¿ÚºÅ'].map(str)\
-                        +'/ONTID:'+hwvlan_df['ONU ID'].map(str)
-hwvlan_df.rename(columns={'ÍøÂç²àVLAN':'svlan','ÄÚ²ãVLAN':'cvlan','ÓÃ»§VLAN':'uservlan'},inplace=True)
-new_hwvlan_df=hwvlan_df[['mark','svlan','cvlan','uservlan']]                      
-# ÖĞĞËÍø¹ÜonuÊı¾İ´¦Àí
-zxonu_df.rename(columns={'ONUË÷Òı':'ontid','Ãû³Æ':'onu_name'},inplace=True)
-zxonu_df['pon']=zxonu_df['ÍøÔªÃû']+'_¿ò:'+zxonu_df['»ú¿ò'].map(str)+'/²Û:'+\
-                   zxonu_df['²ÛÎ»'].map(str)+'/¶Ë¿Ú:'+zxonu_df['¶Ë¿Ú'].map(str)
+hwonu_df['cid']=hwonu_df['OLT IPåœ°å€']+'/0/'+hwonu_df['æ¡†'].map(str)+'/'+hwonu_df['æ§½'].map(str)+\
+                '/0/'+hwonu_df['ç«¯å£'].map(str)+'/'+hw_reg_col.map(hw_reg_transform)
+hwonu_df.to_csv(os.path.join(output_path,'HWONU-{}.csv'.format(date_name)),index=False)                  
+# ä¸­å…´ç½‘ç®¡onuæ•°æ®å¤„ç†
+zxonu_df.rename(columns={'ONUç´¢å¼•':'ontid','åç§°':'onu_name'},inplace=True)
+zxonu_df['pon']=zxonu_df['ç½‘å…ƒå']+'_æ¡†:'+zxonu_df['æœºæ¡†'].map(str)+'/æ§½:'+\
+                   zxonu_df['æ§½ä½'].map(str)+'/ç«¯å£:'+zxonu_df['ç«¯å£'].map(str)
 zxonu_df['mark']=zxonu_df['pon']+'/ONTID:'+zxonu_df['ontid'].map(str)
-zxonu_df['cid']=zxonu_df['ÍøÔªIP']+'/'+zxonu_df['»ú¼Ü'].map(str)+'/'+\
-                   zxonu_df['»ú¿ò'].map(str)+'/'+zxonu_df['²ÛÎ»'].map(str)+\
-                   '/0/'+zxonu_df['¶Ë¿Ú'].map(str)+'/'+zxonu_df['ÈÏÖ¤Öµ'].map(zx_reg_transform)
-new_zxonu_df=zxonu_df[['mark','onu_name','pon','ontid','cid']]
-# ÖĞĞËÍø¹ÜvlanÊı¾İ´¦Àí
-zxvlan_df['mark']=zxvlan_df['ÍøÔªÃû¼°ÀàĞÍ']+'_¿ò:'+zxvlan_df['»ú¿ò'].map(str)+'/²Û:'\
-                   +zxvlan_df['²ÛÎ»'].map(str)+'/¶Ë¿Ú:'+zxvlan_df['¶Ë¿Ú'].map(str)+'/ONTID:'\
-                   +zxvlan_df['ONU ID'].map(str)
-zxvlan_df.rename(columns={'ÓÃ»§VLAN':'uservlan','C-VID':'cvlan','S-VID':'svlan'},inplace=True)
-new_zxvlan_df=zxvlan_df[['mark','svlan','cvlan','uservlan']]
-# Êı¾İÆ´½Ó
-all_onu_df=pd.concat([new_zxonu_df,new_hwonu_df])
-all_vlan_df=pd.concat([new_zxvlan_df,new_hwvlan_df])
-all_onu_df.to_csv(os.path.join(output_path,'allonu-{}.csv'.format(date_name)),index=False)
-all_vlan_df.to_csv(os.path.join(output_path,'allvlan-{}.csv'.format(date_name)),index=False)
-# Êı¾İÆ¥Åä
-all_vlan_df['uservlan']=all_vlan_df['uservlan'].astype(str)
-filtered_vlan_df=all_vlan_df[(all_vlan_df['uservlan']!='46') & (all_vlan_df['uservlan']!='47')]
-filtered_vlan_df.to_csv(os.path.join(output_path,'filteredvlan-{}.csv'.format(date_name)),index=False)
-net_management_cid=pd.merge(all_onu_df,filtered_vlan_df,how='left',on='mark')
-net_management_cid.to_csv(os.path.join(output_path,'Íø¹ÜCID-{}.csv'.format(date_name)),index=False)
-# ¼ÆËã´¦ÀíÊ±³¤
+zxonu_df['cid']=zxonu_df['ç½‘å…ƒIP']+'/'+zxonu_df['æœºæ¶'].map(str)+'/'+\
+                   zxonu_df['æœºæ¡†'].map(str)+'/'+zxonu_df['æ§½ä½'].map(str)+\
+                   '/0/'+zxonu_df['ç«¯å£'].map(str)+'/'+zxonu_df['è®¤è¯å€¼'].map(zx_reg_transform)
+zxonu_df.to_csv(os.path.join(output_path,'ZXONU-{}.csv'.format(date_name)),index=False)
+# è®¡ç®—å¤„ç†æ—¶é•¿
 end_time=datetime.datetime.now()
-print('ÔËĞĞ½áÊøÊ±¼ä:',end_time)
-print('¹²¼ÆÔËĞĞÊ±¼ä:',end_time-start_time)
+print('è¿è¡Œç»“æŸæ—¶é—´:',end_time)
+print('å…±è®¡è¿è¡Œæ—¶é—´:',end_time-start_time)
