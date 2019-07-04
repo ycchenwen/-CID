@@ -10,6 +10,7 @@ count = 1
 while True:
     temp = []
     temp = f.readline().replace('\n', '').split(',')
+    temp = temp[0:len(names)-1]
     if temp == ['']:
         break
     count += 1
