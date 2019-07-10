@@ -2,7 +2,7 @@ import pandas as pd
 import re
 from datetime import date
 today = date.today()
-pat1 = re.compile(r'lag-\d*:\d{1,4}\.\d{1,4}')    # lag-102:2171.2036
+pat1 = re.compile(r'(?:lag-\d*|trunk.*):\d{1,4}\.\d{1,4}')    # lag-102:2171.2036
 pat2 = re.compile(r'(?:\d{1,3}\.){3}\d{1,3}/[01]/[01]/\d{1,3}/0/\d{1,3}/.{24}')   # cid
 pat3 = re.compile(r'vlanid=\d{1,4}')      # 铁通自建cvlan
 pat4 = re.compile(r'vlanid2=\d{1,4}')     # 铁通自建svlan
@@ -40,7 +40,7 @@ def get_cid(st):
     return get_info(st)[-1]
 
 
-df = pd.read_excel(r'D:\AAA活跃用户清单_1562657088520.xls',sheetname='数据1')
+df = pd.read_excel(r'D:\AAA活跃用户清单_1562730164546.xls',sheetname='数据1')
 df['account'] = df['上网账号']+'@'+df['域名']
 df['svlan'] = df['绑定信息'].apply(get_svlan)
 df['cvlan'] = df['绑定信息'].apply(get_cvlan)
