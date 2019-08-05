@@ -8,6 +8,8 @@ pat4 = re.compile('service-port [0-9]+ vport [0-9]+.*')
 pat5 = re.compile('port-identification sub-option remote-id enable vport.*')
 pat6 = re.compile('pppoe-intermediate-agent enable vport.*')
 pat7 = re.compile('pppoe-intermediate-agent trust true replace vport.*')
+pat8 = re.compile('encrypt [0-9]+ enable downstream')
+pat9 = re.compile('sn-bind .*')
 f = open(r'D:\官当割接\startrun.dat')
 data = []
 count = 0
@@ -21,7 +23,7 @@ while True:
     elif st != '':
         count = 0
         if pat1.findall(st) or pat2.findall(st) or pat3.findall(st) or pat4.findall(st) or \
-        pat5.findall(st) or pat6.findall(st) or pat7.findall(st):
+        pat5.findall(st) or pat6.findall(st) or pat7.findall(st) or pat8.findall(st) or pat9.findall(st):
             data.append(st)
 f.close()
 result = []
