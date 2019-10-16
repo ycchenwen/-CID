@@ -13,6 +13,8 @@ for name2,group2 in data_gr2:
 wb = xw.Book(r'D:\AAA活跃用户统计表.xlsx')
 sht1 = wb.sheets['PON统计']
 sht2 = wb.sheets['OLT统计']
+sht1.range('a2').expand().clear_contents()
+sht2.range('a2').expand().clear_contents()
 sht1.range('a2').value = d1
 sht2.range('a2').value = d2
 wb.save()
